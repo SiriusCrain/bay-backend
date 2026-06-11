@@ -1,0 +1,29 @@
+name: Deploy
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          script: |
+            set -e
+            cd /opt/bay-backend
+            git pull origin master
+            docker build -t bay-backend:latest .
+            docker rm -f bay-backend 2>/dev/null || true
+            docker run -d --name bay-backend \
+              -v /opt/bay-backend/specs:/app/specs:ro \
+              -p 127.0.0.1:8000:8000 \
+              --restart unless-stopped \
+              bay-backend:latest
