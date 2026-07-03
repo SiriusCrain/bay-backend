@@ -12,6 +12,6 @@ COPY icons ./icons
 EXPOSE 8000
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s \
-  CMD wget --spider --tries=1 http://localhost:8000/index.json || exit 1
+  CMD wget --spider --tries=1 http://127.0.0.1:8000/index.json || exit 1
 
 CMD ["deno", "run", "--allow-net", "--allow-read", "main.ts"]
