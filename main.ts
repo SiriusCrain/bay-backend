@@ -8,7 +8,7 @@ const app = new Hono();
 app.use(logger());
 app.use(rateLimiter({
   windowMs: 60_000,
-  limit: 1000,
+  limit: 2048,
   standardHeaders: "draft-7",
   keyGenerator: (c) =>
     c.req.header("x-forwarded-for")?.split(",")[0].trim() ?? "unknown",
